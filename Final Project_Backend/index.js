@@ -428,8 +428,8 @@ app.put('/api/student/profile', requireRole('student'), async (req, res) => {
   const user_id = req.user.id;
   const student_id = req.user.student_id;
 
-  const existing = await sql`SELECT id FROM users WHERE email = ${email} AND id != ${user_id}`;
-  if (existing.length > 0) {
+  const existing_email = await sql`SELECT id FROM users WHERE email = ${email} AND id != ${user_id}`;
+  if (existing_email.length > 0) {
     return res.status(400).json({ message: 'This email is already taken !' });
   }
 
@@ -440,8 +440,185 @@ app.put('/api/student/profile', requireRole('student'), async (req, res) => {
 
   await sql`UPDATE students SET instrument_focus = ${instrument_focus} WHERE student_id = ${student_id}`;
 
-  res.json({ message: 'Profile updated successfully !', user: updatedUser[0] });
+  res.json(updatedUser[0]);
 });
+
+
+//----------------------------------
+//---------------------------------- Teachers :
+
+// Teachers classes :
+
+app.get('/api/teacher/classes', requireRole('teacher'), async (req, res) => {
+  const teacher_id = req.user.teacher_id;
+  const classes = await sql`
+    SELECT classes.*,
+      courses.course_name,
+      courses.level,
+      rooms.room_name
+    FROM classes
+    JOIN courses ON classes.course_id = courses.id
+    JOIN rooms ON classes.room_id = rooms.id
+    WHERE classes.teacher_id = ${teacher_id}
+    ORDER BY classes.day, classes.start_time`;
+
+  res.json(classes);
+});
+
+// Teacher -> Students of a Class : //
+
+app.get('/api/teacher/classes/:id/students', requireRole('teacher'), async (req, res) => {
+  const class_id = req.params.id;
+  const teacher_id = req.user.teacher_id;
+
+  const classExists = await sql`SELECT id FROM classes WHERE id = ${class_id} AND teacher_id = ${teacher_id}`;
+  if (classExists.length === 0) {
+    return res.status(404).json({ message: 'Class not found !' });
+  }
+
+  const students = await sql`SELECT enrollments.id AS enrollment_id, students.student_id, users.full_name AS student_name
+    FROM enrollments
+    JOIN students ON enrollments.student_id = students.student_id
+    JOIN users ON students.user_id = users.id
+    WHERE enrollments.class_id = ${class_id} AND enrollments.status = 'active' `;
+
+  res.json(students);
+});
+
+// Sessions of a Class :
+
+app.get('/api/teacher/classes/:id/sessions', requireRole('teacher'), async (req, res) => {
+  const class_id = req.params.id;
+  const teacher_id = req.user.teacher_id;
+
+  const classExists = await sql`SELECT id FROM classes WHERE id = ${class_id} AND teacher_id = ${teacher_id}`;
+  if (classExists.length === 0) {
+    return res.status(404).json({ message: 'Class not found !' });
+  }
+
+  const sessions = await sql`SELECT DISTINCT session_records.session_number, session_records.session_date
+    FROM session_records
+    JOIN enrollments ON session_records.enrollment_id = enrollments.id
+    WHERE enrollments.class_id = ${class_id}
+    ORDER BY session_records.session_date`;
+
+  res.json(sessions);
+});
+
+// Add new Session reacord : 
+
+app.post('/api/teacher/session-records', requireRole('teacher'), async (req, res) => {
+  const { enrollment_id, session_number, session_date, attendance, evaluation, comment } = req.body;
+  const teacher_id = req.user.teacher_id;
+
+  const validEnrollment = await sql`
+    SELECT enrollments.id FROM enrollments
+    JOIN classes ON enrollments.class_id = classes.id
+    WHERE enrollments.id = ${enrollment_id} AND classes.teacher_id = ${teacher_id}`;
+
+  if (validEnrollment.length === 0) {
+    return res.status(403).json({ message: 'This student is not in your class !' });
+  }
+
+  const newRecordSession = await sql`
+    INSERT INTO session_records (enrollment_id, session_number, session_date, attendance, evaluation, comment)
+    VALUES (${enrollment_id}, ${session_number}, ${session_date}, ${attendance}, ${evaluation}, ${comment})
+    RETURNING *`;
+
+  res.send(newRecordSession[0]);
+});
+
+// Edit Session :
+
+app.put('/api/teacher/session-records/:id', requireRole('teacher') , async (req, res) => {
+  const { attendance, evaluation, comment } = req.body;
+  const record_id = req.params.id;
+  const teacher_id = req.user.teacher_id;
+
+  // used ai for this part (check that session record belongs to the teacher) : 
+  const recordExists = await sql`
+    SELECT session_records.id 
+    FROM session_records
+    JOIN enrollments ON session_records.enrollment_id = enrollments.id
+    JOIN classes ON enrollments.class_id = classes.id
+    WHERE session_records.id = ${record_id} AND classes.teacher_id = ${teacher_id}`;
+
+    if (recordExists.length === 0) { 
+      return res.status(404).json({ message: 'Session record not found !' });
+    }
+
+    const updated = await sql`
+    UPDATE session_records SET attendance = ${attendance}, evaluation = ${evaluation}, comment = ${comment}
+    WHERE id = ${record_id}
+    RETURNING *`;
+
+    res.json(updated[0]);
+}); 
+
+// All Reservations :
+
+app.get('/api/teacher/reservations', requireRole('teacher'), async(req, res) => { // used ai to find query :
+  
+  const allReservations = await sql`
+    SELECT practice_reservations.*, users.full_name, rooms.room_name
+    FROM practice_reservations
+    JOIN rooms ON practice_reservations.room_id = rooms.id
+    JOIN students ON practice_reservations.student_id = students.student_id
+    JOIN users ON students.user_id = users.id
+    ORDER BY practice_reservations.reservation_date, practice_reservations.start_time`;
+
+  res.json(allReservations);
+});
+
+
+// Get students of teacher : 
+
+app.get('/api/teacher/students/:id', requireRole('teacher'), async (req, res) => {
+  const student_id = req.params.id;
+  const teacher_id = req.user.teacher_id;
+
+  const student = await sql`
+    SELECT DISTINCT students.*, users.full_name, users.email, users.phone
+    FROM students
+    JOIN users ON students.user_id = users.id
+    JOIN enrollments ON enrollments.student_id = students.student_id
+    JOIN classes ON enrollments.class_id = classes.id
+    WHERE students.student_id = ${student_id} AND classes.teacher_id = ${teacher_id}`;
+
+  if (student.length === 0) {
+    return res.status(404).json({ message: 'Student not found' });
+  }
+
+  res.json(student[0]);
+});
+
+// Update teacher profile : 
+
+app.put('/api/teacher/profile', requireRole('teacher'), async (req, res) => {
+  const { full_name, phone, email, password, specialization } = req.body;
+  const user_id = req.user.id;
+
+  const existing_email = await sql`SELECT id FROM users WHERE email = ${email} AND id != ${user_id}`;
+  if (existing_email.length > 0) {
+    return res.status(400).json({ message: 'This email is already taken !' });
+  }
+
+  const updatedUser = await sql`
+    UPDATE users SET full_name = ${full_name}, phone = ${phone}, email = ${email}, password = ${password}
+    WHERE id = ${user_id}
+    RETURNING *`;
+
+    await sql`UPDATE teachers SET specialization = ${specialization} WHERE teacher_id = ${req.user.teacher_id}`;
+
+    res.json(updatedUser[0]);
+});
+
+
+//----------------------------------
+//---------------------------------- Manager :
+
+
+
 
 //---------------------------------- app listen : 
 
