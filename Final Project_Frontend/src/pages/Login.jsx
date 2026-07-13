@@ -23,7 +23,7 @@ export default function Login() {
     try {
       const data = await post("/login", {email, password});
       loginUser(data.token, data.user);
-      window.location.href = "/home";     
+      window.location.href = "/"; // for home
     } catch (error) {
       setError(error.message);
     }

@@ -11,7 +11,7 @@ export default function Navbar() {
 
   return (
     <div className="navbar">
-      <Link to="/home">Home</Link>
+      <Link to="/">Home</Link>
       <span>Welcome {user && user.full_name} !</span>
       <button type="button" onClick={handleLogout}>Logout</button>
     </div>
