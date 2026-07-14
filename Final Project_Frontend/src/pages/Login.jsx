@@ -39,7 +39,7 @@ export default function Login() {
         <input type="password" placeholder="password" value={password} onChange={handlePasswordChange} />
         <br />
         <button type="submit">Login</button>
-        <p>Don't have an account? <Link to="/register">Register</Link></p>
+        <p className="auth-link">Don't have an account? <Link to="/register">Register</Link></p>
         <br />
       </form>
     </div>

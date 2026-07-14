@@ -61,6 +61,7 @@ export default function Reservations() {
 
   const handleShowAddForm = () => {
     setShowAddForm(true);
+    setEditingId(null);
   };
 
   const handleNewRoomIdChange = (event) => {
@@ -171,6 +172,7 @@ export default function Reservations() {
     setEditReservationDate(reservation.reservation_date);
     setEditStartTime(reservation.start_time);
     setEditEndTime(reservation.end_time);
+    setShowAddForm(false);
   };
 
   const handleUpdateReservation = async () => {
@@ -223,11 +225,11 @@ export default function Reservations() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Reservation</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Reservation</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Reservation</h3>
           <label>Room:</label>
           <select value={newRoomId} onChange={handleNewRoomIdChange}>
@@ -273,7 +275,7 @@ export default function Reservations() {
       )}
 
       {editingId && (
-        <div>
+        <div className="card">
           <h3>Edit Reservation</h3>
           <label>Room:</label>
           <select value={editRoomId} onChange={handleEditRoomIdChange}>
@@ -318,31 +320,34 @@ export default function Reservations() {
         </div>
       )}
 
-      <Table
-        columns={[
-          { key: "room_name", label: "Room" },
-          { key: "student_name", label: "Student" },
-          { key: "reservation_type", label: "Type" },
-          { key: "participant_count", label: "Participants" },
-          { key: "reservation_date", label: "Date" },
-          {
-            key: "time",
-            label: "Time",
-            render: (row) => `${row.start_time}-${row.end_time}`,
-          },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => (
-              <>
-                <button type="button" onClick={() => handleEdit(row)}>Edit</button>
-                <button type="button" onClick={() => handleDelete(row.id)}>Delete</button>
-              </>
-            ),
-          },
-        ]}
-        rows={reservations}
-      />
+      {!showAddForm && !editingId && (
+        <Table
+          columns={[
+            { key: "room_name", label: "Room" },
+            { key: "student_name", label: "Student" },
+            { key: "reservation_type", label: "Type" },
+            { key: "participant_count", label: "Participants" },
+            { key: "reservation_date", label: "Date" },
+            {
+              key: "time",
+              label: "Time",
+              render: (row) => `${row.start_time}-${row.end_time}`,
+            },
+            {
+              key: "actions",
+              label: "",
+              render: (row) => (
+                <>
+                  <button type="button" onClick={() => handleEdit(row)}>Edit</button>
+                  <button type="button" onClick={() => handleDelete(row.id)}>Delete</button>
+                </>
+              ),
+            },
+          ]}
+          rows={reservations}
+        />
+      )}
+      
     </div>
   );
 }

@@ -106,11 +106,11 @@ export default function InstrumentLoans() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Borrow an Instrument</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Borrow an Instrument</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Borrow an Instrument</h3>
           <label>Instrument:</label>
           <select value={newInstrumentId} onChange={handleNewInstrumentIdChange}>

@@ -64,6 +64,7 @@ export default function ClassDetail() {
 
   const handleShowAddSessionForm = () => {
     setShowAddSessionForm(true);
+    setEditingSessionId(null);
   };
 
   const handleNewEnrollmentIdChange = (event) => {
@@ -144,6 +145,7 @@ export default function ClassDetail() {
     setEditAttendance(session.attendance);
     setEditEvaluation(session.evaluation);
     setEditComment(session.comment);
+    setShowAddSessionForm(false);
   };
 
   const handleUpdateSession = async () => {
@@ -170,26 +172,28 @@ export default function ClassDetail() {
 
   return (
     <div>
-      <Link to="/teacher/my-classes">Back to My Classes</Link>
+      <Link to="/teacher/my-classes" className="back-link">Back to My Classes</Link>
       <h2>Class Roster</h2>
       {error && <p className="error-text">{error}</p>}
 
-      <Table
-        columns={[
-          { key: "student_name", label: "Student" },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => (
-              <button type="button" onClick={() => handleViewStudent(row.student_id)}>View Details</button>
-            ),
-          },
-        ]}
-        rows={roster}
-      />
+      <div className="roster-table">
+        <Table
+          columns={[
+            { key: "student_name", label: "Student" },
+            {
+              key: "actions",
+              label: "",
+              render: (row) => (
+                <button type="button" onClick={() => handleViewStudent(row.student_id)}>View Details</button>
+              ),
+            },
+          ]}
+          rows={roster}
+        />
+      </div>
 
       {selectedStudent && (
-        <div>
+        <div className="card">
           <h3>Student Details</h3>
           <p>Full Name: {selectedStudent.full_name}</p>
           <p>Email: {selectedStudent.email}</p>
@@ -200,11 +204,11 @@ export default function ClassDetail() {
       )}
 
       {!showAddSessionForm && (
-        <button type="button" onClick={handleShowAddSessionForm}>Add Session Record</button>
+        <button type="button" className="button-add" onClick={handleShowAddSessionForm}>Add Session Record</button>
       )}
 
       {showAddSessionForm && (
-        <div>
+        <div className="card">
           <h3>Add Session Record</h3>
           <label>Student:</label>
           <select value={newEnrollmentId} onChange={handleNewEnrollmentIdChange}>
@@ -246,7 +250,7 @@ export default function ClassDetail() {
       )}
 
       {editingSessionId && (
-        <div>
+        <div className="card">
           <h3>Edit Session Record</h3>
           <label>Attendance:</label>
           <select value={editAttendance} onChange={handleEditSessionAttendanceChange}>
@@ -271,23 +275,27 @@ export default function ClassDetail() {
         </div>
       )}
 
-      <h3>Session Records</h3>
-      <Table
-        columns={[
-          { key: "student_name", label: "Student" },
-          { key: "session_number", label: "Session #" },
-          { key: "session_date", label: "Date" },
-          { key: "attendance", label: "Attendance" },
-          { key: "evaluation", label: "Evaluation" },
-          { key: "comment", label: "Comment" },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => (<button type="button" onClick={() => handleEditSession(row)}>Edit</button>),
-          },
-        ]}
-        rows={sessions}
-      />
+      {!showAddSessionForm && !editingSessionId && (
+        <>
+          <h3>Session Records</h3>
+          <Table
+            columns={[
+              { key: "student_name", label: "Student" },
+              { key: "session_number", label: "Session #" },
+              { key: "session_date", label: "Date" },
+              { key: "attendance", label: "Attendance" },
+              { key: "evaluation", label: "Evaluation" },
+              { key: "comment", label: "Comment" },
+              {
+                key: "actions",
+                label: "",
+                render: (row) => (<button type="button" onClick={() => handleEditSession(row)}>Edit</button>),
+              },
+            ]}
+            rows={sessions}
+          />
+        </>
+      )}
     </div>
   );
 }

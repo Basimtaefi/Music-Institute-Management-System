@@ -29,6 +29,7 @@ export default function Instruments() {
 
   const handleShowAddForm = () => {
     setShowAddForm(true);
+    setEditingId(null);
   };
 
   const handleNewNameChange = (event) => {
@@ -75,6 +76,7 @@ export default function Instruments() {
     setEditingId(instrument.id);
     setEditName(instrument.name);
     setEditStatus(instrument.status);
+    setShowAddForm(false);
   };
 
   const handleUpdateInstrument = async () => {
@@ -117,11 +119,11 @@ export default function Instruments() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Instrument</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Instrument</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Instrument</h3>
           <label>Name:</label>
           <input type="text" value={newName} onChange={handleNewNameChange} />
@@ -139,7 +141,7 @@ export default function Instruments() {
       )}
 
       {editingId && (
-        <div>
+        <div className="card">
           <h3>Edit Instrument</h3>
           <label>Name:</label>
           <input type="text" value={editName} onChange={handleEditNameChange} />
@@ -156,7 +158,8 @@ export default function Instruments() {
         </div>
       )}
 
-      <Table
+      {!showAddForm && !editingId && (
+        <Table
         columns={[
           { key: "name", label: "Name" },
           { key: "status", label: "Status" },
@@ -173,6 +176,7 @@ export default function Instruments() {
         ]}
         rows={instruments}
       />
+      )}
     </div>
   );
 }

@@ -66,11 +66,11 @@ export default function Register() {
   }  
 
    return (
-    <div className="registration-page">
+    <div className="page-contente">
       <h2>Register</h2>
+      {error && <p className="error-text">{error}</p>}
 
-      <div className="register-fields">
-        {error && <p className="error-text">{error}</p>}
+      <div className="card">
 
         <label>Full Name:</label>
         <input type="text" placeholder="Enter full name" value={fullName} onChange={handleFullNameChange} />

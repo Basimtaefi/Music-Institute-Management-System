@@ -35,6 +35,7 @@ export default function Teachers() {
 
   const handleShowAddForm = () => {
     setShowAddForm(true);
+    setEditingId(null);
   };
 
   const handleNewFullNameChange = (event) => {
@@ -119,6 +120,7 @@ export default function Teachers() {
     setEditPassword(teacher.password);
     setEditPhone(teacher.phone);
     setEditSpecialization(teacher.specialization);
+    setShowAddForm(false);
   };
 
    const handleUpdateTeacher = async () => {
@@ -167,11 +169,11 @@ export default function Teachers() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Teacher</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Teacher</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Teacher</h3>
           <label>Full Name:</label>
           <input type="text" value={newFullName} onChange={handleNewFullNameChange} />
@@ -200,7 +202,7 @@ export default function Teachers() {
       )}
 
       {editingId && (
-        <div>
+        <div className="card">
           <h3>Edit Teacher</h3>
           <label>Full Name:</label>
           <input type="text" value={editFullName} onChange={handleEditFullNameChange} />
@@ -228,25 +230,28 @@ export default function Teachers() {
         </div>
       )}
 
-      <Table
-        columns={[
-          { key: "full_name", label: "Full Name" },
-          { key: "email", label: "Email" },
-          { key: "phone", label: "Phone" },
-          { key: "specialization", label: "Specialization" },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => (
-              <>
-                <button type="button" onClick={() => handleEdit(row)}>Edit</button>
-                <button type="button" onClick={() => handleDelete(row.teacher_id)}>Delete</button>
-              </>
-            ),
-          },
-        ]}
-        rows={teachers}
-      />
+      {!showAddForm && !editingId && (
+        <Table
+          columns={[
+            { key: "full_name", label: "Full Name" },
+            { key: "email", label: "Email" },
+            { key: "phone", label: "Phone" },
+            { key: "specialization", label: "Specialization" },
+            {
+              key: "actions",
+              label: "",
+              render: (row) => (
+                <>
+                  <button type="button" onClick={() => handleEdit(row)}>Edit</button>
+                  <button type="button" onClick={() => handleDelete(row.teacher_id)}>Delete</button>
+                </>
+              ),
+            },
+          ]}
+          rows={teachers}
+        />
+      )}
+      
     </div>
   );
 }

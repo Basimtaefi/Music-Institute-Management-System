@@ -73,7 +73,7 @@ export default function Profile() {
       <h2>My Profile</h2>
       {error && <p className="error-text">{error}</p>}
 
-      <div>
+      <div className="card">
         <label>Full Name:</label>
         <input type="text" value={fullName} onChange={handleFullNameChange} />
 

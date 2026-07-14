@@ -120,11 +120,11 @@ export default function Reservations() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Reservation</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Reservation</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Reservation</h3>
           <label>Room:</label>
           <select value={newRoomId} onChange={handleNewRoomIdChange}>
@@ -174,7 +174,7 @@ export default function Reservations() {
             key: "actions",
             label: "",
             render: (row) => (
-              <button type="button" onClick={() => handleDelete(row.id)}>Cancel</button>
+              <button type="button" className="btn-danger" onClick={() => handleDelete(row.id)}>Cancel</button>
             ),
           },
         ]}

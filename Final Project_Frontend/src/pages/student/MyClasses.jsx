@@ -57,7 +57,7 @@ export default function MyClasses() {
             key: "actions",
             label: "",
             render: (row) => (
-              <button type="button" onClick={() => handleCancel(row.enrollment_id)}>Cancel</button>
+              <button type="button" className="btn-danger" onClick={() => handleCancel(row.enrollment_id)}>Cancel</button>
             ),
           },
         ]}

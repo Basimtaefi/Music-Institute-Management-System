@@ -71,6 +71,7 @@ export default function Classes() {
 
   const handleShowAddForm = () => {
     setShowAddForm(true);
+    setEditingId(null);
   };
 
   const handleNewCourseNameChange = (event) => {
@@ -233,6 +234,7 @@ export default function Classes() {
     setEditStartTime(classItem.start_time);
     setEditEndTime(classItem.end_time);
     setEditTermNumber(classItem.term_number);
+    setShowAddForm(false);
   };
 
    const handleUpdateClass = async () => {
@@ -293,11 +295,11 @@ export default function Classes() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Class</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Class</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Class</h3>
           <label>Course Name:</label>
           <input type="text" value={newCourseName} onChange={handleNewCourseNameChange} />
@@ -367,7 +369,7 @@ export default function Classes() {
       )}
 
       {editingId && (
-        <div>
+        <div className="card">
           <h3>Edit Class</h3>
           <label>Course Name:</label>
           <input type="text" value={editCourseName} onChange={handleEditCourseNameChange} />
@@ -436,33 +438,36 @@ export default function Classes() {
         </div>
       )}
 
-      <Table
-        columns={[
-          { key: "course_name", label: "Course Name" },
-          { key: "level", label: "Level" },
-          { key: "teacher_name", label: "Teacher" },
-          { key: "room_name", label: "Room" },
-          { key: "day", label: "Day" },
-          {
-            key: "time",
-            label: "Time",
-            render: (row) => `${row.start_time}-${row.end_time}`,
-          },
-          { key: "class_type", label: "Type" },
-          { key: "capacity", label: "Capacity" },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => (
-              <>
-                <button type="button" onClick={() => handleEdit(row)}>Edit</button>
-                <button type="button" onClick={() => handleDelete(row.id)}>Delete</button>
-              </>
-            ),
-          },
-        ]}
-        rows={classes}
-      />
+      {!showAddForm && !editingId && (
+        <Table
+          columns={[
+            { key: "course_name", label: "Course Name" },
+            { key: "level", label: "Level" },
+            { key: "teacher_name", label: "Teacher" },
+            { key: "room_name", label: "Room" },
+            { key: "day", label: "Day" },
+            {
+              key: "time",
+              label: "Time",
+              render: (row) => `${row.start_time}-${row.end_time}`,
+            },
+            { key: "class_type", label: "Type" },
+            { key: "capacity", label: "Capacity" },
+            {
+              key: "actions",
+              label: "",
+              render: (row) => (
+                <>
+                  <button type="button" onClick={() => handleEdit(row)}>Edit</button>
+                  <button type="button" onClick={() => handleDelete(row.id)}>Delete</button>
+                </>
+              ),
+            },
+          ]}
+          rows={classes}
+        />
+      )}
+      
     </div>
   );
 }

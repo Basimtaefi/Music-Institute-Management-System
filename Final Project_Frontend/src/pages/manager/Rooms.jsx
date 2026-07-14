@@ -46,6 +46,7 @@ export default function Rooms() {
 
   const handleShowAddForm = () => {
     setShowAddForm(true);
+    setEditingId(null);
   }
 
   const handleAddRoom = async () => {
@@ -90,6 +91,7 @@ export default function Rooms() {
     setEditRoomName(room.room_name);
     setEditRoomType(room.room_type);
     setEditStatus(room.status);
+    setShowAddForm(false);
   }
 
   const handleUpdateRoom = async () => {
@@ -120,11 +122,11 @@ export default function Rooms() {
       {error && <p className="error-text">{error}</p>}
 
       {!showAddForm && (
-        <button type="button" onClick={handleShowAddForm}>Add New Room</button>
+        <button type="button" className="button-add" onClick={handleShowAddForm}>Add New Room</button>
       )}
 
       {showAddForm && (
-        <div>
+        <div className="card">
           <h3>Add New Room</h3>
           <label>Room Name:</label>
           <input type="text" value={newRoomName} onChange={handleNewRoomNameChange} />
@@ -148,7 +150,7 @@ export default function Rooms() {
       )}
 
       {editingId && (
-        <div>
+        <div className="card">
           <h3>Edit Room</h3>
           <label>Room Name:</label>
           <input type="text" value={editRoomName} onChange={handleEditRoomNameChange} />
@@ -171,19 +173,21 @@ export default function Rooms() {
         </div>
       )}
       
-      <Table
-        columns={[
-          { key: "room_name", label: "Room Name" },
-          { key: "room_type", label: "Type" },
-          { key: "status", label: "Status" },
-          {
-            key: "actions",
-            label: "",
-            render: (row) => <button type="button" onClick={() => handleEdit(row)}>Edit</button>,
-          },
-        ]}
-        rows={rooms}
-      />
+      {!showAddForm && !editingId && (
+        <Table
+          columns={[
+            { key: "room_name", label: "Room Name" },
+            { key: "room_type", label: "Type" },
+            { key: "status", label: "Status" },
+            {
+              key: "actions",
+              label: "",
+              render: (row) => <button type="button" onClick={() => handleEdit(row)}>Edit</button>,
+            },
+          ]}
+          rows={rooms}
+        />
+      )}
       {/* fill the table with proper data */}
     </div>
   );
