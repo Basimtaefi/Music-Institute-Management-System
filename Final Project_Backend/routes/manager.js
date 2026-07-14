@@ -574,6 +574,14 @@ router.delete('/reservations/:id', requireRole('manager'), async (req, res) => {
   res.json({ message: 'Reservation deleted successfully !' });
 });
 
+// Get own profile :
+
+router.get('/profile', requireRole('manager'), async (req, res) => {
+  const manager_id = req.user.manager_id;
+  const manager = await sql`SELECT * FROM managers WHERE manager_id = ${manager_id}`;
+  res.json(manager[0]);
+});
+
 // ---------------------------------- Update Profiles : 
 
 router.put('/profile', requireRole('manager'), async (req, res) => {

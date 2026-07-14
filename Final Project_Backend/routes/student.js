@@ -295,6 +295,14 @@ router.get('/attendance', requireRole('student'), async (req, res) => {
   res.json(records);
 });
 
+// Get own profile :
+
+router.get('/profile', requireRole('student'), async (req, res) => {
+  const student_id = req.user.student_id;
+  const student = await sql`SELECT * FROM students WHERE student_id = ${student_id}`;
+  res.json(student[0]);
+});
+
 // Edit student profile : (uesd AI for writing queries) 
 
 router.put('/profile', requireRole('student'), async (req, res) => {

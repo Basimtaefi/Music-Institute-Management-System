@@ -148,6 +148,14 @@ router.get('/students/:id', requireRole('teacher'), async (req, res) => {
   res.json(student[0]);
 });
 
+// Get own profile :
+
+router.get('/profile', requireRole('teacher'), async (req, res) => {
+  const teacher_id = req.user.teacher_id;
+  const teacher = await sql`SELECT * FROM teachers WHERE teacher_id = ${teacher_id}`;
+  res.json(teacher[0]);
+});
+
 // Update teacher profile : (used AI for queries)
 
 router.put('/profile', requireRole('teacher'), async (req, res) => {
