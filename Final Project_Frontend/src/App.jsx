@@ -18,6 +18,10 @@ import StudentReservations from "./pages/student/Reservations";
 import InstrumentLoans from "./pages/student/InstrumentLoans";
 import Attendance from "./pages/student/Attendance";
 import StudentProfile from "./pages/student/Profile";
+import TeacherMyClasses from "./pages/teacher/MyClasses";
+import ClassDetail from "./pages/teacher/ClassDetail";
+import TeacherReservations from "./pages/teacher/Reservations";
+import TeacherProfile from "./pages/teacher/Profile";
 
 export default function App() {
   return (
@@ -38,13 +42,18 @@ export default function App() {
           <Route path="/manager/loans" element={<Loans />} />
           <Route path="/manager/reservations" element={<Reservations />} />
           <Route path="/manager/profile" element={<Profile />} />
-          
+
           <Route path="/student/classes" element={<BrowseClasses />} />
           <Route path="/student/my-classes" element={<MyClasses />} />
           <Route path="/student/reservations" element={<StudentReservations />} />
           <Route path="/student/instrument-loans" element={<InstrumentLoans />} />
           <Route path="/student/attendance" element={<Attendance />} />
           <Route path="/student/profile" element={<StudentProfile />} />
+
+          <Route path="/teacher/my-classes" element={<TeacherMyClasses />} />
+          <Route path="/teacher/class-detail" element={<ClassDetail />} />
+          <Route path="/teacher/reservations" element={<TeacherReservations />} />
+          <Route path="/teacher/profile" element={<TeacherProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

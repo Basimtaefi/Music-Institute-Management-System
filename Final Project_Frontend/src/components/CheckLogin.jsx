@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { getUser } from "../auth";
 
-export default function ProtectedRoute({ children }) {
+export default function CheckLogin({ children }) {
   const user = getUser();
 
   if (!user) {
