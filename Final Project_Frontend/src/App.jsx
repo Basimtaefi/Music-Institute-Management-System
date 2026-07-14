@@ -12,6 +12,12 @@ import Classes from "./pages/manager/Classes";
 import Loans from "./pages/manager/Loans";
 import Reservations from "./pages/manager/Reservations";
 import Profile from "./pages/manager/Profile";
+import BrowseClasses from "./pages/student/BrowseClasses";
+import MyClasses from "./pages/student/MyClasses";
+import StudentReservations from "./pages/student/Reservations";
+import InstrumentLoans from "./pages/student/InstrumentLoans";
+import Attendance from "./pages/student/Attendance";
+import StudentProfile from "./pages/student/Profile";
 
 export default function App() {
   return (
@@ -23,6 +29,7 @@ export default function App() {
         <Route element={<CheckLogin><Layout /></CheckLogin>}>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
+
           <Route path="/manager/rooms" element={<Rooms />} />
           <Route path="/manager/instruments" element={<Instruments />} />
           <Route path="/manager/students" element={<Students />} />
@@ -31,6 +38,13 @@ export default function App() {
           <Route path="/manager/loans" element={<Loans />} />
           <Route path="/manager/reservations" element={<Reservations />} />
           <Route path="/manager/profile" element={<Profile />} />
+          
+          <Route path="/student/classes" element={<BrowseClasses />} />
+          <Route path="/student/my-classes" element={<MyClasses />} />
+          <Route path="/student/reservations" element={<StudentReservations />} />
+          <Route path="/student/instrument-loans" element={<InstrumentLoans />} />
+          <Route path="/student/attendance" element={<Attendance />} />
+          <Route path="/student/profile" element={<StudentProfile />} />
         </Route>
       </Routes>
     </BrowserRouter>

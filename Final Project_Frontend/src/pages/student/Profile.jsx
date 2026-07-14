@@ -6,6 +6,7 @@ export default function Profile() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [instrumentFocus, setInstrumentFocus] = useState("Piano");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -14,11 +15,12 @@ export default function Profile() {
 
   const loadProfile = async () => {
     try {
-      const data = await get("/manager/profile");
+      const data = await get("/student/profile");
       setFullName(data.full_name);
       setPhone(data.phone);
       setEmail(data.email);
       setPassword(data.password);
+      setInstrumentFocus(data.instrument_focus);
     } catch (err) {
       setError(err.message);
     }
@@ -44,16 +46,23 @@ export default function Profile() {
     setPassword(newText);
   };
 
+  const handleInstrumentFocusChange = (event) => {
+    const newText = event.target.value;
+    setInstrumentFocus(newText);
+  };
+
   const handleSubmit = async () => {
-    setError(""); //
+    setError("");
+
     try {
-      await put("/manager/profile", {
+      await put("/student/profile", {
         full_name: fullName,
         phone: phone,
         email: email,
         password: password,
+        instrument_focus: instrumentFocus,
       });
-      window.alert("Profile has been updated!");
+      window.alert("Profile has been updated !");
     } catch (err) {
       setError(err.message);
     }
@@ -76,6 +85,15 @@ export default function Profile() {
 
         <label>Password:</label>
         <input type="password" value={password} onChange={handlePasswordChange} />
+
+        <label>Instrument Focus:</label>
+        <select value={instrumentFocus} onChange={handleInstrumentFocusChange}>
+          <option value="Piano">Piano</option>
+          <option value="Violin">Violin</option>
+          <option value="Guitar">Guitar</option>
+          <option value="Vocal Training">Vocal</option>
+          <option value="Drums">Drums</option>
+        </select>
 
         <button type="button" onClick={handleSubmit}>Update Profile</button>
       </div>
